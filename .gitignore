@@ -1,0 +1,31 @@
+# Артефакты сборки CMake
+build/
+bin/
+lib/
+out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Скомпилированные объекты и бинарники
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.exe
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.cbp
+*.user
+.vs/
+
+# Кэш тестирования и временные файлы
+*_autotests
+*.log
+*.tmp
+*.xml
