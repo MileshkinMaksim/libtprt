@@ -4,12 +4,13 @@
 #include "tprt/Kinematics/Christoffel.hpp"
 #include <libInterpolate/Interpolators/_1D/CubicSplineInterpolator.hpp>
 #include <vector>
+#include <memory>
 
 namespace tprt {
 
 class VTISlownessSpline {
 public:
-    VTISlownessSpline() = default;
+    VTISlownessSpline();
 
     // Построение 1D сплайна групповой медленности S_g(theta_g)
     void build(const Tensor4D& A, WaveType wave_type, int num_samples = 91);
@@ -21,7 +22,7 @@ public:
     double getSegmentTravelTime(const Point3D& p1, const Point3D& p2) const;
 
 private:
-    _1D::CubicSplineInterpolator<double> spline_;
+    std::shared_ptr<_1D::CubicSplineInterpolator<double>> spline_;
     bool is_initialized_ = false;
 };
 

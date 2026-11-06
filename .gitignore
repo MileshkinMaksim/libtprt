@@ -1,5 +1,6 @@
 # Артефакты сборки CMake
 build/
+benchmark/
 bin/
 lib/
 out/

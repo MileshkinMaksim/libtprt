@@ -5,6 +5,9 @@
 
 namespace tprt {
 
+VTISlownessSpline::VTISlownessSpline()
+    : spline_(std::make_shared<_1D::CubicSplineInterpolator<double>>()) {}
+
 void VTISlownessSpline::build(const Tensor4D& A, WaveType wave_type, int num_samples) {
     struct Sample {
         double angle;
@@ -48,7 +51,7 @@ void VTISlownessSpline::build(const Tensor4D& A, WaveType wave_type, int num_sam
         slownesses.push_back(s.slowness);
     }
 
-    spline_.setData(group_angles, slownesses);
+    spline_->setData(group_angles, slownesses);
     is_initialized_ = true;
 }
 
@@ -59,7 +62,7 @@ double VTISlownessSpline::getSlowness(const Vector3D& ray_direction) const {
 
     Vector3D d = ray_direction.normalized();
     double theta_g = std::acos(std::clamp(std::abs(d.z()), 0.0, 1.0));
-    return spline_(theta_g);
+    return (*spline_)(theta_g);
 }
 
 double VTISlownessSpline::getSegmentTravelTime(const Point3D& p1, const Point3D& p2) const {

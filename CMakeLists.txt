@@ -129,3 +129,4 @@ target_link_libraries(tprt_autotests PRIVATE tprt GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(tprt_autotests)
+
