@@ -23,9 +23,9 @@ double TwoPointBendingTracer::objectiveFunction(unsigned n, const double* x, dou
         double node_x = x[2 * i];
         double node_y = x[2 * i + 1];
 
-        // Получаем границу текущего слоя для узла преломления
-        size_t next_layer_idx = segments[i + 1].layer_index;
-        double node_z = data->model->getLayer(next_layer_idx).getTopHorizon().getDepth(node_x, node_y);
+        // Получаем Z целевого горизонта для i-го промежуточного узла напрямую из модели
+        size_t target_horizon_idx = data->code->getTargetHorizonIndex(i);
+        double node_z = data->model->getHorizon(target_horizon_idx).getDepth(node_x, node_y);
 
         current_nodes.emplace_back(node_x, node_y, node_z);
     }
@@ -70,7 +70,7 @@ RayTrajectory TwoPointBendingTracer::solve(const Point3D& source, const Point3D&
     RayTrajectory trajectory;
     size_t num_segments = code.size();
 
-    // Прямой луч (1 segment): изгиб узлов не требуется
+    // Односегментный прямой луч
     if (num_segments == 1) {
         const auto& seg = code.getSegments()[0];
         const auto& layer = model_.getLayer(seg.layer_index);
@@ -86,7 +86,7 @@ RayTrajectory TwoPointBendingTracer::solve(const Point3D& source, const Point3D&
     size_t num_nodes = num_segments - 1;
     unsigned n_vars = static_cast<unsigned>(2 * num_nodes);
 
-    // Начальное приближение узлов луча вдоль прямой линия Источник - Приемник
+    // Начальное приближение промежуточных узлов (линейная интерполяция X и Y)
     std::vector<double> x_vars(n_vars);
     for (size_t i = 0; i < num_nodes; ++i) {
         double alpha = static_cast<double>(i + 1) / static_cast<double>(num_segments);
@@ -114,8 +114,10 @@ RayTrajectory TwoPointBendingTracer::solve(const Point3D& source, const Point3D&
     for (size_t i = 0; i < num_nodes; ++i) {
         double nx = x_vars[2 * i];
         double ny = x_vars[2 * i + 1];
-        size_t next_layer_idx = code.getSegments()[i + 1].layer_index;
-        double nz = model_.getLayer(next_layer_idx).getTopHorizon().getDepth(nx, ny);
+
+        size_t target_horizon_idx = code.getTargetHorizonIndex(i);
+        double nz = model_.getHorizon(target_horizon_idx).getDepth(nx, ny);
+
         trajectory.points.emplace_back(nx, ny, nz);
     }
     trajectory.points.push_back(receiver);
