@@ -18,6 +18,8 @@ static std::string getDataDirectory() {
     std::vector<std::string> candidates = {
         "Autotest_Data",
         "../Autotest_Data",
+        "../tests/Autotest_Data",
+        "tests/Autotest_Data",
         "../../Autotest_Data"
     };
     for (const auto& path : candidates) {
@@ -70,7 +72,7 @@ TEST(DatasetValidationTest, RunAllAutotestData) {
     auto receivers = JsonParser::parseReceivers(data_dir + "/receivers.json");
 
     std::cout << "\n=========================================================================================\n";
-    std::cout << "          ЗАПУСК АВТОМАТИЧЕСКОГО ТЕСТИРОВАНИЯ СИМУЛЯЦИИ ЛУЧЕВОГО ТРАССИРОВАНИЯ (C++)      \n";
+    std::cout << "          ЗАПУСК АВТОМАТИЧЕСКОГО ТЕСТИРОВАНИЯ СИМУЛЯЦИИ ЛУЧЕВОГО ТРАССИРОВАНИЯ      \n";
     std::cout << "=========================================================================================\n";
 
     for (int test_num = 1; test_num <= 5; ++test_num) {
